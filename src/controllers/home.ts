@@ -3,7 +3,7 @@ import * as mysql from 'mysql';
 import config from '../config/config';
 import * as fs from 'fs';
 import * as shortid from 'shortid';
-import * as path from 'path';
+// import * as path from 'path';
 import { nouns } from '../nouns';
 import { createTransport } from 'nodemailer';
 import { CREDS_USER, CREDS_PASSWORD } from '../config/gmail-credentials';
@@ -15,13 +15,14 @@ const transport = createTransport({
         port: 465,
         auth: {
                 user: CREDS_USER,
-                pass: CREDS_PASSWORD
+                pass: CREDS_PASSWORD,
         },
 });
 
 export default class HomeController {
-        public index(req: Request, res: Response, next: Function): void {
-                res.sendFile(path.join(__dirname, 'build', 'index.html'));
+        public index(req: Request, res: Response): void {
+                // res.sendFile(path.join(__dirname, 'build', 'index.html'));
+                res.json('hello there');
         }
 
         public login(req: Request, res: Response): void {
@@ -106,11 +107,11 @@ export default class HomeController {
                                                                 strQuery += ` AND users.email LIKE '%${arrayAuteur[1]}%'`;
                                                         break;
                                                 case 1:
-                                                        strQuery += ` (titre LIKE '%${req.body.filters.search.split("'").join("''")}%'`;
+                                                        strQuery += ` (titre LIKE '%${req.body.filters.search.split(`'`).join(`''`)}%'`;
                                                         if (req.body.table !== 'actualite') {
                                                                 let keywords: string[] = req.body.filters.search.split(' ');
                                                                 for (let j = 0; j < keywords.length; j++) {
-                                                                        strQuery += ` OR keywords like '%${keywords[j].split("'").join("''")}%'`
+                                                                        strQuery += ` OR keywords like '%${keywords[j].split(`'`).join(`''`)}%'`
                                                                 }
                                                         }
                                                         strQuery += `)`;
@@ -154,23 +155,27 @@ export default class HomeController {
                 });
 
                 let strQuery: string;
+                
+                req.body.titre = req.body.titre.split(`'`).join(`''`);
+                req.body.keywords ? req.body.keywords = req.body.keywords.split(`'`).join(`''`) : null;
+
                 switch (req.body.type) {
                         case 'actualite': {
-                                strQuery = `INSERT INTO actualite (id, titre, site, description, date, userID, file) VALUES (NULL, '${req.body.titre.split("'").join("''")}', '${req.body.site}','${req.body.description.split("'").join("''")}', current_timestamp(), '${req.body.userID}', '${fileName}.${fileType}')`;
+                                strQuery = `INSERT INTO actualite (id, titre, site, description, date, userID, file) VALUES (NULL, '${req.body.titre}', '${req.body.site}','${req.body.description.split(`'`).join(`''`)}', current_timestamp(), '${req.body.userID}', '${fileName}.${fileType}')`;
                                 break;
                         }
                         case 'presentationsites': {
-                                strQuery = `INSERT INTO presentationsites (id, titre, site, theme, file, date, userID) VALUES (NULL, '${req.body.titre.split("'").join("''")}', '${req.body.site}', '${req.body.theme}', '${fileName}.pdf', current_timestamp(), '${req.body.userID}')`;
+                                strQuery = `INSERT INTO presentationsites (id, titre, site, theme, file, date, userID) VALUES (NULL, '${req.body.titre}', '${req.body.site}', '${req.body.theme}', '${fileName}.pdf', current_timestamp(), '${req.body.userID}')`;
                                 break;
                         }
                         case 'crterrain':
                         case 'crpolice': {
-                                strQuery = `INSERT INTO ${req.body.type} (id, titre, site, keywords, file, date, userID) VALUES (NULL, '${req.body.titre.split("'").join("''")}', '${req.body.site}', '${req.body.keywords}', '${fileName}.pdf', current_timestamp(), '${req.body.userID}')`;
+                                strQuery = `INSERT INTO ${req.body.type} (id, titre, site, keywords, file, date, userID) VALUES (NULL, '${req.body.titre}', '${req.body.site}', '${req.body.keywords}', '${fileName}.pdf', current_timestamp(), '${req.body.userID}')`;
                                 break;
                         }
                         case 'connaissancesproduites':
                         case 'operationsgestion': {
-                                strQuery = `INSERT INTO ${req.body.type} (id, titre, site, theme, keywords, file, date, userID) VALUES (NULL, '${req.body.titre.split("'").join("''")}', '${req.body.site}', '${req.body.theme}', '${req.body.keywords.split("'").join("''")}', '${fileName}.pdf', current_timestamp(), '${req.body.userID}')`;
+                                strQuery = `INSERT INTO ${req.body.type} (id, titre, site, theme, keywords, file, date, userID) VALUES (NULL, '${req.body.titre}', '${req.body.site}', '${req.body.theme}', '${req.body.keywords}', '${fileName}.pdf', current_timestamp(), '${req.body.userID}')`;
                                 break;
                         }
                         default: {
