@@ -155,9 +155,10 @@ export default class HomeController {
                 });
 
                 let strQuery: string;
-                
+
                 req.body.titre = req.body.titre.split(`'`).join(`''`);
-                req.body.keywords ? req.body.keywords = req.body.keywords.split(`'`).join(`''`) : null;
+                if (req.body.keywords)
+                        req.body.keywords = req.body.keywords.split(`'`).join(`''`);
 
                 switch (req.body.type) {
                         case 'actualite': {
