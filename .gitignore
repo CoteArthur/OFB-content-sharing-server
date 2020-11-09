@@ -12,14 +12,6 @@ bin
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
-*.csr
-
-*.key
-
-*.crt
-
-*.pem
-
 files/*
 
 src/config/gmail-credentials.ts
