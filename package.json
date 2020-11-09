@@ -9,8 +9,6 @@
     "test": "mocha -r ts-node/register -w ./spec/**/*.spec.ts",
     "build": "tsc -p src",
     "start": "set NODE_ENV=production && node dist/index.js",
-    "build:docker": "docker build -t rjmacarthy/express-typescript-starter .",
-    "docker:compose": "docker-compose up",
     "format": "prettier --write 'src/**/*ts'",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
