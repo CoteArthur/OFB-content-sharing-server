@@ -13,5 +13,6 @@ bin
 !.elasticbeanstalk/*.global.yml
 
 files/*
+!files/.gitkeep 
 
 src/config/gmail-credentials.ts
